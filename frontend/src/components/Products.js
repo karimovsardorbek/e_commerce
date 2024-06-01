@@ -1,26 +1,37 @@
-// src/components/Products.js
+// frontend/src/components/Products.js
 import React, { useEffect, useState } from 'react';
 import { getProducts } from '../services/api';
 
-const Products = () => {
-    const [products, setProducts] = useState([]);
+function Products() {
+  const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        getProducts().then(response => {
-            setProducts(response.data);
-        });
-    }, []);
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const productsData = await getProducts();
+        setProducts(productsData);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
 
-    return (
-        <div>
-            <h1>Products</h1>
-            <ul>
-                {products.map(product => (
-                    <li key={product.id}>{product.name}</li>
-                ))}
-            </ul>
-        </div>
-    );
-};
+    fetchProducts();
+  }, []);
+
+  return (
+    <div>
+      <h2 className="text-center my-4">Products</h2>
+      <div className="list-group">
+        {products.map((product) => (
+          <div key={product.id} className="list-group-item">
+            <h5>{product.name}</h5>
+            <p>{product.description}</p>
+            <p className="text-muted">Price: ${product.price}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default Products;
